@@ -24,11 +24,14 @@ from functools import wraps
 
 from flask import (
     Flask, request, redirect, url_for, render_template,
-    session, g, make_response, flash, jsonify
+    session, g, make_response, flash, jsonify, send_from_directory
 )
 from werkzeug.security import generate_password_hash, check_password_hash
 
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
+STATIC_DIR = os.path.join(BASE_DIR, "static")
+TEMPLATES_DIR = os.path.join(BASE_DIR, "templates")
+
 if os.environ.get("VERCEL") or os.environ.get("AWS_LAMBDA_FUNCTION_NAME"):
     DB_DIR = "/tmp/database"
     os.makedirs(DB_DIR, exist_ok=True)
@@ -38,7 +41,12 @@ else:
     os.makedirs(DB_DIR, exist_ok=True)
     DB_PATH = os.path.join(DB_DIR, "techcorp.db")
 
-app = Flask(__name__)
+app = Flask(
+    __name__,
+    static_folder=STATIC_DIR,
+    template_folder=TEMPLATES_DIR,
+    static_url_path="/static"
+)
 app.secret_key = os.environ.get("LAB_SECRET_KEY", "nexora-pro-cyber-range-secret-key-nex042")
 app.config["SESSION_COOKIE_HTTPONLY"] = True
 app.config["SESSION_COOKIE_SAMESITE"] = "Lax"
@@ -49,6 +57,11 @@ logging.basicConfig(
     datefmt="%H:%M:%S",
 )
 log = logging.getLogger("nexora-soc")
+
+
+@app.route("/static/<path:filename>")
+def serve_static_assets(filename):
+    return send_from_directory(STATIC_DIR, filename)
 
 
 @app.before_request
