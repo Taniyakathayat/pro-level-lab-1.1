@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Nexora Systems — Operator Sign In</title>
+  <link rel="stylesheet" href="{{ url_for('static', filename='auth.css') }}">
+</head>
+<body>
+  <div class="auth-shell">
+
+    <!-- Left: hero -->
+    <div class="hero">
+      <div class="hero-mark">
+        <span class="glyph">NEX</span>
+        Nexora Intelligence Systems
+      </div>
+
+      <div class="hero-content">
+        <h1>Global Incident Response & Operations Portal</h1>
+        <p class="lede">
+          Sign in to access your assigned SOC consoles, telemetry dashboards, and operations tools.
+        </p>
+
+        <div class="hero-points">
+          <div class="hero-point">
+            <span class="dot"></span>
+            <div>
+              <strong>Case NEX-042: The Ghost in the Ledger</strong>
+              <span>Active incident response investigation into automated treasury outflow.</span>
+            </div>
+          </div>
+          <div class="hero-point">
+            <span class="dot"></span>
+            <div>
+              <strong>Multi-Layer Cyber Range</strong>
+              <span>AI context integrity, blockchain forensics, and API least privilege.</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="preview">
+          <div class="preview-head">
+            <div class="who">Active Analyst: <b>alex</b></div>
+            <div class="preview-badge">SOC Level-1</div>
+          </div>
+          <div class="preview-row">
+            <span class="label">SOC Dashboard</span>
+            <span class="ok">Available</span>
+          </div>
+          <div class="preview-row">
+            <span class="label">Operator Profile</span>
+            <span class="ok">Available</span>
+          </div>
+          <div class="preview-row">
+            <span class="label">Treasury Operations</span>
+            <span class="locked">Restricted</span>
+          </div>
+          <div class="preview-row">
+            <span class="label">Auto-Signing Admin</span>
+            <span class="locked">Restricted</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Right: auth card -->
+    <div class="auth-pane">
+      <div class="auth-card">
+
+        <div class="tabs">
+          <button type="button" id="tab-login" class="active">Log in</button>
+        </div>
+
+        <!-- LOGIN -->
+        <div id="panel-login" class="form-panel active">
+          <h2>Operator Sign In</h2>
+          <p class="auth-sub">Enter credentials issued for Case NEX-042.</p>
+
+          <form method="POST" action="{{ url_for('login') }}">
+            <div class="field">
+              <label for="username">Username</label>
+              <input type="text" id="username" name="username" value="alex" autocomplete="username" required>
+            </div>
+
+            <div class="field">
+              <label for="password">Password</label>
+              <input type="password" id="password" name="password" value="Alex@123" autocomplete="current-password" required>
+            </div>
+
+            {% if error %}
+            <div class="auth-error">{{ error }}</div>
+            {% endif %}
+
+            <button type="submit" class="submit-btn">Sign In to Portal &rarr;</button>
+          </form>
+        </div>
+
+      </div>
+    </div>
+
+  </div>
+</body>
+</html>

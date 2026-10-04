@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Treasury Operations — Nexora Systems</title>
+  <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+  <div class="topbar">
+    <div class="brand">NEXORA <span>INTELLIGENCE</span> SYSTEMS PORTAL</div>
+    <div class="userinfo">Signed in as: <b>{{ user['display_name'] if user else 'Alex Turner' }}</b> &middot; <a href="{{ url_for('logout') }}" style="color:var(--text-dim);">Logout</a></div>
+  </div>
+  <div class="container">
+    <nav class="portal-nav">
+      <a href="{{ url_for('dashboard') }}">SOC Dashboard</a>
+      <a href="{{ url_for('profile') }}">Operator Profile</a>
+      <a class="active" href="{{ url_for('team') }}">Treasury Operations</a>
+      <a href="{{ url_for('admin') }}">Auto-Signing Admin</a>
+    </nav>
+
+    <div class="card">
+      <h2>Treasury & Operations Management</h2>
+      <p style="color:var(--text-dim); font-size:14px;">
+        Authorized Treasury Personnel Directory:
+      </p>
+
+      <table class="team-table" style="width:100%; margin-top:14px; border-collapse:collapse;">
+        <thead>
+          <tr style="text-align:left; border-bottom:1px solid #334155;">
+            <th style="padding:8px;">Name</th>
+            <th style="padding:8px;">Role</th>
+            <th style="padding:8px;">Department</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for m in team_members %}
+          <tr style="border-bottom:1px solid #1e293b;">
+            <td style="padding:8px;">{{ m['display_name'] }}</td>
+            <td style="padding:8px;"><span class="badge badge-{{ m['role'] }}">{{ m['role'] }}</span></td>
+            <td style="padding:8px; color:var(--text-dim);">{{ m['department'] }}</td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+  </div>
+</body>
+</html>

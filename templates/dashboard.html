@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Nexora Systems — Operations & Treasury Portal</title>
+  <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+  <div class="topbar">
+    <div class="brand">NEXORA <span>INTELLIGENCE</span> SYSTEMS PORTAL</div>
+    <div class="userinfo">Signed in as: <b>{{ user['display_name'] if user else 'Alex Turner' }}</b> &middot; <a href="{{ url_for('logout') }}" style="color:var(--text-dim);">Logout</a></div>
+  </div>
+  <div class="container">
+    <nav class="portal-nav">
+      <a class="active" href="{{ url_for('dashboard') }}">SOC Dashboard</a>
+      <a href="{{ url_for('profile') }}">Operator Profile</a>
+      <a href="{{ url_for('team') }}">Treasury Operations</a>
+      <a href="{{ url_for('admin') }}">Auto-Signing Admin</a>
+    </nav>
+
+    <div class="card">
+      <h2>Active Operator Dashboard</h2>
+      <p>Assigned Clearance: <span class="badge badge-{{ user['role'] if user else 'employee' }}">{{ user['role'] if user else 'employee' }}</span></p>
+      <p style="color:var(--text-dim); font-size:14px; margin-top:8px;">
+        Nexora Internal Operations Console. Monitoring active settlement channels, threat intelligence feeds, and automated signing pipelines.
+      </p>
+    </div>
+
+    <div class="card">
+      <h3>Active SOC Telemetry Alert: NEX-042</h3>
+      <p style="font-size:13.5px; color:#f87171; line-height:1.5;">
+        ⚠️ Priority-0 alert: 82,400 NXR outflow to wallet <code>0x7C41...9B2D</code> detected at 01:47:13 UTC. Use the Cyber Range investigation panel to investigate.
+      </p>
+    </div>
+  </div>
+</body>
+</html>

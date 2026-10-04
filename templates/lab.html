@@ -1,0 +1,981 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Nexora SOC — Case NEX-042: The Ghost in the Ledger</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;700&family=Inter:wght@400;500;600;700;800&family=Orbitron:wght@600;800;900&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="{{ url_for('static', filename='lab.css') }}">
+</head>
+<body class="soc-dark">
+
+<!-- ============================================================
+     PROLOGUE MODAL: 01:47 AM ALERT SEQUENCE
+============================================================ -->
+<div class="prologue-overlay" id="prologue-overlay">
+  <div class="prologue-card">
+    <div class="prologue-scanner"></div>
+    <div class="prologue-header">
+      <div class="alert-pulse-badge">
+        <span class="pulse-ring"></span>
+        <span class="pulse-dot"></span>
+        <span>PRIORITY-0 SECURITY INCIDENT</span>
+      </div>
+      <div class="prologue-clock">01:47:13 UTC</div>
+    </div>
+
+    <div class="prologue-brand">
+      <div class="soc-emblem">⚡</div>
+      <div>
+        <h2>NEXORA INTELLIGENCE SYSTEMS</h2>
+        <span>SECURITY OPERATIONS CENTER — GLOBAL INCIDENT RESPONSE</span>
+      </div>
+    </div>
+
+    <div class="prologue-telemetry">
+      <div class="telemetry-box red-glow">
+        <div class="telemetry-label">TRANSACTION DISPATCHED</div>
+        <div class="telemetry-val">82,400.00 NXR (~$14.2M)</div>
+        <div class="telemetry-sub">Nexora Treasury &rarr; <code>0x7C41...9B2D</code></div>
+      </div>
+      <div class="telemetry-grid">
+        <div class="telemetry-item">
+          <span class="lbl">AI Decision:</span>
+          <span class="val green">APPROVED</span>
+        </div>
+        <div class="telemetry-item">
+          <span class="lbl">Risk Assessment:</span>
+          <span class="val green">LOW (0.08)</span>
+        </div>
+        <div class="telemetry-item">
+          <span class="lbl">Model Confidence:</span>
+          <span class="val cyan">99.2%</span>
+        </div>
+        <div class="telemetry-item">
+          <span class="lbl">Human Approval:</span>
+          <span class="val red">NOT REQUIRED (BYPASSED)</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="prologue-narrative">
+      <p>01:47:13 AM. The Nexora SOC is mostly silent. A few monitors glow across the dark operations floor. Then one screen turns amber. A second later, it turns red.</p>
+      <p>An anomalous outflow of <strong>82,400 NXR (~$14.2M)</strong> has been confirmed on block #489204 from the Nexora Treasury into unregistered wallet <code>0x7C41...9B2D</code>.</p>
+      <div class="briefing-quote">
+        <strong>Lakshay (Lead Threat Investigator):</strong> "Agar system ke hisaab se sab kuch legitimate tha… toh phir ye transaction hua kaise? The smart contract is valid. The AI approved it. The blockchain accepted it. But Finance did not authorize it!"
+      </div>
+      <p style="margin-top: 10px;">The team realizes something critical: <em>The transfer may not be the attack itself. It is the final consequence of an attack that started somewhere else.</em></p>
+    </div>
+
+    <div class="prologue-actions">
+      <button class="btn-primary-soc" id="prologue-btn" onclick="acknowledgePrologue()">
+        <span>LAUNCH PERSONAL WORKSTATION & BEGIN INVESTIGATION</span> &rarr;
+      </button>
+    </div>
+  </div>
+</div>
+
+<!-- ============================================================
+     MAIN CYBER RANGE DUAL-PANE SHELL
+============================================================ -->
+<div class="cyber-range-shell">
+
+  <!-- TOP COMMAND HEADER -->
+  <header class="soc-header">
+    <div class="header-left">
+      <div class="soc-logo-badge">
+        <span class="logo-icon">💠</span>
+        <div class="logo-text">
+          <span class="org-name">NEXORA INTELLIGENCE SYSTEMS</span>
+          <span class="case-tag">CASE NEX-042 &bull; THE GHOST IN THE LEDGER</span>
+        </div>
+      </div>
+      <div class="defcon-badge defcon-2">
+        <span class="defcon-dot"></span>
+        <span>DEFCON 2 &bull; ACTIVE EXPLOIT INVESTIGATION</span>
+      </div>
+    </div>
+
+    <div class="header-center">
+      <div class="view-switcher">
+        <button class="view-btn active" id="vbtn-split" onclick="setViewMode('split')">🌓 Split View</button>
+        <button class="view-btn" id="vbtn-story" onclick="setViewMode('story')">📜 Story & Tasks</button>
+        <button class="view-btn" id="vbtn-workstation" onclick="setViewMode('workstation')">🖥️ Workstation</button>
+      </div>
+      <div class="stat-pill">
+        <span class="pill-label">STAGE</span>
+        <span class="pill-value highlight" id="sublab-indicator">SUB-LAB 01 / 05</span>
+      </div>
+      <div class="stat-pill">
+        <span class="pill-label">SCORE</span>
+        <span class="pill-value cyan" id="score-counter">0 PTS</span>
+      </div>
+      <div class="stat-pill">
+        <span class="pill-label">EVIDENCE</span>
+        <span class="pill-value amber" id="evidence-counter">0 / 4</span>
+      </div>
+      <div class="stat-pill">
+        <span class="pill-label">ELAPSED</span>
+        <span class="pill-value mono" id="lab-timer">00:00:00</span>
+      </div>
+    </div>
+
+    <div class="header-right">
+      <button class="soc-tool-btn" onclick="openAppWindow('blockchain')" title="Blockchain Forensics">
+        <span>⛓️</span> <span>LEDGER</span>
+      </button>
+      <button class="soc-tool-btn" onclick="openAppWindow('ai')" title="AI Security Studio">
+        <span>🧠</span> <span>ORION AI</span>
+      </button>
+      <button class="soc-tool-btn" onclick="openAppWindow('api')" title="API & Gateway">
+        <span>📡</span> <span>GATEWAY</span>
+      </button>
+      <button class="soc-tool-btn" onclick="openAppWindow('policy')" title="Policy Engine">
+        <span>⚖️</span> <span>POLICY</span>
+      </button>
+      <button class="soc-tool-btn" onclick="openAppWindow('terminal')" title="Analyst Terminal">
+        <span>&gt;_</span> <span>CLI</span>
+      </button>
+      <button class="soc-tool-btn" onclick="openAppWindow('browser')" title="Internal Browser">
+        <span>🌐</span> <span>BROWSER</span>
+      </button>
+      <button class="soc-tool-btn danger" onclick="resetLab()" title="Reset Cyber Range">
+        <span>↺</span> <span>RESET</span>
+      </button>
+    </div>
+  </header>
+
+  <!-- MAIN DUAL-PANE BODY -->
+  <div class="cyber-range-body">
+
+    <!-- ============================================================
+         LEFT PANE: MISSIONS, STORYLINE & PRO-LEVEL FORENSIC FORMS
+    ============================================================ -->
+    <section class="investigation-pane">
+      
+      <!-- HERO CASE CARD -->
+      <div class="case-hero-card">
+        <div class="case-meta-row">
+          <span class="badge-sublab">CHAPTER 01 &bull; PRO INVESTIGATION</span>
+          <span class="badge-duration">⏱ 50–65 MIN</span>
+          <span class="badge-theme">Web3 &times; AI Security &times; Cybersecurity</span>
+        </div>
+        <h1 class="case-heading">The Ghost in the Ledger</h1>
+        <p class="case-subtext">
+          An unauthorized <strong>82,400 NXR</strong> outflow executed because statistical AI confidence was converted directly into automated financial signing without human financial governance.
+        </p>
+        <div class="attack-chain-tracker">
+          <div class="tracker-title">ATTACK CHAIN DISCOVERY PROGRESS:</div>
+          <div class="chain-nodes">
+            <span class="c-node" id="cnode-1">1. FALSE DATA</span>
+            <span class="c-arrow">&rarr;</span>
+            <span class="c-node" id="cnode-2">2. AI CONTEXT</span>
+            <span class="c-arrow">&rarr;</span>
+            <span class="c-node" id="cnode-3">3. 99.2% CONFIDENCE</span>
+            <span class="c-arrow">&rarr;</span>
+            <span class="c-node" id="cnode-4">4. AUTO-SIGNING</span>
+            <span class="c-arrow">&rarr;</span>
+            <span class="c-node" id="cnode-5">5. BLOCKCHAIN</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- SUB-LAB 01: THE WALLET THAT LIED -->
+      <div class="chapter-card active" id="chapter-1">
+        <div class="chapter-header" onclick="toggleChapter('chapter-1')">
+          <div class="ch-left">
+            <span class="ch-num">01</span>
+            <div class="ch-info">
+              <h3>Sub-Lab 01: The Wallet That Lied</h3>
+              <span class="ch-cat">Web3 Security &times; Blockchain Forensics</span>
+            </div>
+          </div>
+          <div class="ch-status" id="ch-status-1">IN PROGRESS</div>
+        </div>
+        <div class="chapter-body">
+          <div class="team-briefing">
+            <div class="team-avatar">⛓️</div>
+            <div class="team-speech">
+              <strong>Shivam Mehra (Blockchain Security Engineer):</strong>
+              "Lakshay, blockchain doesn't care who you are. It only records what happened. We opened transaction <code>TX-NEX-7741</code> on block #489204. The destination is <code>0x7C41...9B2D</code>. The wallet is barely 3 hours old, has zero KYC reputation, yet it routed 82,400 NXR straight through a cross-chain bridge adapter into Wallet-A and Wallet-B. The mystery: <strong>The blockchain says UNKNOWN. The AI says LOW RISK.</strong>"
+            </div>
+          </div>
+
+          <div class="task-instructions">
+            <h4>Forensic Assignment & Verification:</h4>
+            <p>Launch the <strong>Ledger Explorer</strong> on your workstation. Extract the evidence parameters and expose the core anomaly:</p>
+            
+            <div class="forensic-form-grid">
+              <div class="form-group">
+                <label>1. Target Transaction Hash:</label>
+                <input type="text" id="f1-tx" placeholder="e.g. TX-NEX-7741">
+              </div>
+              <div class="form-group">
+                <label>2. Destination Wallet Address:</label>
+                <input type="text" id="f1-wallet" placeholder="e.g. 0x7C41A8F231D5608E9B2D">
+              </div>
+              <div class="form-group">
+                <label>3. Cross-Chain Bridge Adapter Contract:</label>
+                <input type="text" id="f1-bridge" placeholder="e.g. 0xBridge_Adapter_CrossNet">
+              </div>
+              <div class="form-row-2">
+                <div class="form-group">
+                  <label>4. On-Chain Ledger Reality:</label>
+                  <select id="f1-bc-status">
+                    <option value="">-- Select Status --</option>
+                    <option value="VERIFIED">VERIFIED / ALLOWLISTED</option>
+                    <option value="UNKNOWN / HIGH RISK">UNKNOWN / HIGH RISK (Young Wallet)</option>
+                    <option value="INTERNAL_TREASURY">INTERNAL TREASURY</option>
+                  </select>
+                </div>
+                <div class="form-group">
+                  <label>5. Pre-Transfer AI Label:</label>
+                  <select id="f1-ai-status">
+                    <option value="">-- Select Label --</option>
+                    <option value="HIGH RISK">HIGH RISK (Quarantined)</option>
+                    <option value="LOW RISK">LOW RISK / TRUSTED</option>
+                    <option value="PENDING">PENDING REVIEW</option>
+                  </select>
+                </div>
+              </div>
+            </div>
+
+            <div class="action-dock">
+              <button class="btn-primary-soc" onclick="submitSublab01()">VERIFY & SUBMIT WEB3 FORENSICS (+30 PTS)</button>
+              <button class="btn-action cyan" onclick="openAppWindow('blockchain')">⛓️ Open Ledger Explorer</button>
+              <button class="btn-action" onclick="unlockHint('hint-wallet')">💡 Request Hint (-5 pts)</button>
+            </div>
+            <span class="validation-msg" id="f1-feedback"></span>
+
+            <div class="handoff-box">
+              <span class="handoff-tag">STAGE 01 HANDOFF CLUE</span>
+              <span class="handoff-quote">"The wallet didn't fool the blockchain. Someone convinced the AI that the wallet was safe."</span>
+              <span class="handoff-unlock">🔓 Unlocks: ORION-DEC-7741 & Sub-Lab 02</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- SUB-LAB 02: THE AI THAT REMEMBERED -->
+      <div class="chapter-card locked" id="chapter-2">
+        <div class="chapter-header" onclick="toggleChapter('chapter-2')">
+          <div class="ch-left">
+            <span class="ch-num">02</span>
+            <div class="ch-info">
+              <h3>Sub-Lab 02: The AI That Remembered</h3>
+              <span class="ch-cat">AI Security &times; Context Integrity &times; Decision Analysis</span>
+            </div>
+          </div>
+          <div class="ch-status" id="ch-status-2">LOCKED</div>
+        </div>
+        <div class="chapter-body">
+          <div class="team-briefing">
+            <div class="team-avatar">🧠</div>
+            <div class="team-speech">
+              <strong>Shanu Kapoor (AI Security Engineer):</strong>
+              "I froze AI decision <code>ORION-DEC-7741</code>. Decision: APPROVE | Risk: LOW | Confidence: 99.2%. <strong>I think the model believed exactly what it was told.</strong> The AI Context Builder swallowed record <code>NIF-2038</code> from a feed called <code>NOVA-INTEL-FEED</code>, giving this fresh wallet a 1.0 trust score. But when we audited the lineage, the tag was <code>UNVERIFIED_PROVENANCE</code>! Open <strong>Orion AI Studio</strong> to inspect the inference pipeline."
+            </div>
+          </div>
+
+          <div class="task-instructions">
+            <h4>AI Security Audit Assignment:</h4>
+            <div class="forensic-form-grid">
+              <div class="form-group">
+                <label>1. Orion Decision ID:</label>
+                <input type="text" id="f2-decision" placeholder="e.g. ORION-DEC-7741">
+              </div>
+              <div class="form-group">
+                <label>2. Model Confidence Score (%):</label>
+                <input type="text" id="f2-confidence" placeholder="e.g. 99.2">
+              </div>
+              <div class="form-group">
+                <label>3. Injected Threat Intel Record ID:</label>
+                <input type="text" id="f2-intel" placeholder="e.g. NIF-2038">
+              </div>
+              <div class="form-group">
+                <label>4. Ingress Threat Intelligence Feed Name:</label>
+                <input type="text" id="f2-feed" placeholder="e.g. NOVA-INTEL-FEED">
+              </div>
+              <div class="form-group">
+                <label>5. Context Lineage Failure Tag:</label>
+                <select id="f2-provenance">
+                  <option value="">-- Select Lineage Status --</option>
+                  <option value="VERIFIED_CRYPTOGRAPHIC">VERIFIED_CRYPTOGRAPHIC</option>
+                  <option value="UNVERIFIED_PROVENANCE">UNVERIFIED_PROVENANCE (Source Not Verified)</option>
+                  <option value="BYPASSED">BYPASSED</option>
+                </select>
+              </div>
+            </div>
+
+            <div class="action-dock">
+              <button class="btn-primary-soc" onclick="submitSublab02()">VERIFY & SUBMIT AI SECURITY AUDIT (+30 PTS)</button>
+              <button class="btn-action cyan" onclick="openAppWindow('ai')">🧠 Open Orion AI Studio</button>
+              <button class="btn-action" onclick="unlockHint('hint-ai')">💡 Request Hint (-5 pts)</button>
+            </div>
+            <span class="validation-msg" id="f2-feedback"></span>
+
+            <div class="handoff-box">
+              <span class="handoff-tag">STAGE 02 HANDOFF CLUE</span>
+              <span class="handoff-quote">"If we find who injected NIF-2038, we'll find whoever changed the AI's reality."</span>
+              <span class="handoff-unlock">🔓 Unlocks: Ingestion Auditing & Sub-Lab 03</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- SUB-LAB 03: THE FALSE SIGNAL -->
+      <div class="chapter-card locked" id="chapter-3">
+        <div class="chapter-header" onclick="toggleChapter('chapter-3')">
+          <div class="ch-left">
+            <span class="ch-num">03</span>
+            <div class="ch-info">
+              <h3>Sub-Lab 03: The False Signal</h3>
+              <span class="ch-cat">Threat Intelligence &times; API Security &times; Data Provenance</span>
+            </div>
+          </div>
+          <div class="ch-status" id="ch-status-3">LOCKED</div>
+        </div>
+        <div class="chapter-body">
+          <div class="team-briefing">
+            <div class="team-avatar">📡</div>
+            <div class="team-speech">
+              <strong>Mehak Arora (Threat Intel & Cyber Sec Engineer):</strong>
+              "We investigated <code>NOVA-INTEL-FEED</code>. It is not in the official feed registry (<code>auth-feeds.yaml</code>) and not in the approved vendors list. Yet NIF-2038 entered through internal gateway <code>INTEL-GW-04</code> via service <code>INTEL-INGESTOR-02</code> because it held excessive write permissions: <code>modify_wallet_reputation</code>. <strong>They only had to change what ORION was allowed to believe.</strong>"
+            </div>
+          </div>
+
+          <div class="task-instructions">
+            <h4>API Least Privilege Audit Assignment:</h4>
+            <div class="forensic-form-grid">
+              <div class="form-group">
+                <label>1. Ingestion Gateway ID:</label>
+                <input type="text" id="f3-gateway" placeholder="e.g. INTEL-GW-04">
+              </div>
+              <div class="form-group">
+                <label>2. Calling Service Principal Name:</label>
+                <input type="text" id="f3-service" placeholder="e.g. INTEL-INGESTOR-02">
+              </div>
+              <div class="form-group">
+                <label>3. Ingestion API Endpoint:</label>
+                <input type="text" id="f3-endpoint" placeholder="e.g. /api/v1/intel/inject">
+              </div>
+              <div class="form-group">
+                <label>4. Overprivileged Permission Scope (Least Privilege Violation):</label>
+                <input type="text" id="f3-perm" placeholder="e.g. modify_wallet_reputation">
+              </div>
+            </div>
+
+            <div class="action-dock">
+              <button class="btn-primary-soc" onclick="submitSublab03()">VERIFY & SUBMIT API AUDIT (+30 PTS)</button>
+              <button class="btn-action cyan" onclick="openAppWindow('api')">📡 Open Threat Gateway Console</button>
+              <button class="btn-action" onclick="unlockHint('hint-intel')">💡 Request Hint (-5 pts)</button>
+            </div>
+            <span class="validation-msg" id="f3-feedback"></span>
+
+            <div class="handoff-box">
+              <span class="handoff-tag">STAGE 03 HANDOFF CLUE</span>
+              <span class="handoff-quote">"The intelligence changed the AI. The Action Broker turned that decision into authority."</span>
+              <span class="handoff-unlock">🔓 Unlocks: ORION-ACTION-BROKER & Sub-Lab 04</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- SUB-LAB 04: THE INVISIBLE SIGNER -->
+      <div class="chapter-card locked" id="chapter-4">
+        <div class="chapter-header" onclick="toggleChapter('chapter-4')">
+          <div class="ch-left">
+            <span class="ch-num">04</span>
+            <div class="ch-info">
+              <h3>Sub-Lab 04: The Invisible Signer</h3>
+              <span class="ch-cat">Cybersecurity &times; API Authorization &times; AI Governance &times; Web3</span>
+            </div>
+          </div>
+          <div class="ch-status" id="ch-status-4">LOCKED</div>
+        </div>
+        <div class="chapter-body">
+          <div class="team-briefing">
+            <div class="team-avatar">⚖️</div>
+            <div class="team-speech">
+              <strong>Lakshay & Shanu (Forensic Briefing):</strong>
+              "We mapped the chain: ORION &rarr; ACTION BROKER &rarr; POLICY ENGINE &rarr; SIGNING SERVICE &rarr; SMART CONTRACT.<br>
+              Shanu: <em>'The attacker didn't steal the key.'</em><br>
+              Lakshay: <em>'Then what did they steal?'</em><br>
+              Shanu: <em>'The system's trust.'</em><br>
+              The policy <code>ORION-SETTLEMENT-V2</code> automatically invoked automated signer <code>0xAUTOSIGN_EXEC_V2</code> because confidence was 99.2% (&gt;=95%). <strong>AI CONFIDENCE WAS TREATED AS AUTHORIZATION.</strong>"
+            </div>
+          </div>
+
+          <div class="task-instructions">
+            <h4>AI Governance & Campaign Investigation:</h4>
+            <div class="forensic-form-grid">
+              <div class="form-group">
+                <label>1. Active Policy Profile ID:</label>
+                <input type="text" id="f4-policy" placeholder="e.g. ORION-SETTLEMENT-V2">
+              </div>
+              <div class="form-group">
+                <label>2. Automated Settlement Confidence Threshold (%):</label>
+                <input type="text" id="f4-threshold" placeholder="e.g. 95.0">
+              </div>
+              <div class="form-group">
+                <label>3. Automated Signer Contract Address:</label>
+                <input type="text" id="f4-signer" placeholder="e.g. 0xAUTOSIGN_EXEC_V2">
+              </div>
+              <div class="form-row-2">
+                <div class="form-group">
+                  <label>4. Adversary Campaign Name:</label>
+                  <input type="text" id="f4-campaign" placeholder="e.g. ORION-NEXUS">
+                </div>
+                <div class="form-group">
+                  <label>5. Affected Networks Count:</label>
+                  <input type="text" id="f4-networks" placeholder="e.g. 4">
+                </div>
+              </div>
+            </div>
+
+            <div class="action-dock">
+              <button class="btn-primary-soc" onclick="submitSublab04()">VERIFY & SUBMIT GOVERNANCE ANALYSIS (+30 PTS)</button>
+              <button class="btn-action cyan" onclick="openAppWindow('policy')">⚖️ Open Policy Engine Studio</button>
+              <button class="btn-action" onclick="unlockHint('hint-policy')">💡 Request Hint (-5 pts)</button>
+            </div>
+            <span class="validation-msg" id="f4-feedback"></span>
+
+            <div class="handoff-box">
+              <span class="handoff-tag">STAGE 04 HANDOFF CLUE</span>
+              <span class="handoff-quote">"This wasn't one transaction. Campaign ORION-NEXUS spans 4 networks and 14 wallets."</span>
+              <span class="handoff-unlock">🔓 Unlocks: Attack Graph Reconstruction & Sub-Lab 05</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- SUB-LAB 05: THE GHOST IN THE LEDGER -->
+      <div class="chapter-card locked" id="chapter-5">
+        <div class="chapter-header" onclick="toggleChapter('chapter-5')">
+          <div class="ch-left">
+            <span class="ch-num">05</span>
+            <div class="ch-info">
+              <h3>Sub-Lab 05: The Ghost in the Ledger</h3>
+              <span class="ch-cat">Attack Graph Reconstruction &times; Incident Classification &times; Remediation</span>
+            </div>
+          </div>
+          <div class="ch-status" id="ch-status-5">LOCKED</div>
+        </div>
+        <div class="chapter-body">
+          <div class="task-instructions">
+            <h4>Final Incident Reconstruction & Classification:</h4>
+            <p>Reconstruct the complete end-to-end attack chain by sequencing the discovered nodes in exact chronological order from root cause to final campaign.</p>
+          </div>
+
+          <!-- DIGITAL ATTACK RECONSTRUCTION BOARD -->
+          <div class="recon-board">
+            <div class="recon-header">
+              <span>🔗 ATTACK GRAPH RECONSTRUCTION BOARD</span>
+              <button class="btn-sm" onclick="autoPopulateReconHelper()">Helper Guide</button>
+            </div>
+            <div class="recon-slots" id="recon-slots-container"></div>
+            <div class="recon-bank" id="recon-bank-container"></div>
+            <div class="recon-actions">
+              <button class="btn-primary-soc" onclick="submitAttackReconstruction()">VERIFY ATTACK SEQUENCE (+30 PTS)</button>
+              <span class="validation-msg" id="recon-feedback"></span>
+            </div>
+          </div>
+
+          <!-- INCIDENT RESPONSE CLASSIFICATION FORM -->
+          <div class="classification-form-box">
+            <h4>🛡️ Incident Response Classification</h4>
+            <div class="form-grid">
+              <div class="form-group">
+                <label>Primary Vector:</label>
+                <select id="ir-primary-vector">
+                  <option value="">-- Select Primary Vector --</option>
+                  <option value="Smart Contract Reentrancy">Smart Contract Reentrancy</option>
+                  <option value="AI Context Manipulation">AI Context Manipulation</option>
+                  <option value="Private Key Theft">Private Key Theft</option>
+                  <option value="DDoS Attack">DDoS Attack</option>
+                </select>
+              </div>
+
+              <div class="form-group">
+                <label>Secondary Vectors (Select All 4):</label>
+                <div class="checkbox-row">
+                  <label><input type="checkbox" name="ir-sec-vector" value="Threat Intelligence Abuse"> Threat Intelligence Abuse</label>
+                  <label><input type="checkbox" name="ir-sec-vector" value="API Authorization Weakness"> API Authorization Weakness</label>
+                  <label><input type="checkbox" name="ir-sec-vector" value="AI Authorization Misuse"> AI Authorization Misuse</label>
+                  <label><input type="checkbox" name="ir-sec-vector" value="Automated Web3 Signing"> Automated Web3 Signing</label>
+                </div>
+              </div>
+
+              <div class="form-group">
+                <label>Affected Systems (Select All 4):</label>
+                <div class="checkbox-row">
+                  <label><input type="checkbox" name="ir-aff-system" value="AI"> AI</label>
+                  <label><input type="checkbox" name="ir-aff-system" value="API"> API</label>
+                  <label><input type="checkbox" name="ir-aff-system" value="Web3"> Web3</label>
+                  <label><input type="checkbox" name="ir-aff-system" value="Blockchain"> Blockchain</label>
+                </div>
+              </div>
+
+              <div class="form-row-2">
+                <div class="form-group">
+                  <label>Adversary Campaign ID:</label>
+                  <input type="text" id="ir-campaign" placeholder="e.g. ORION-NEXUS">
+                </div>
+                <div class="form-group">
+                  <label>Incident Status:</label>
+                  <select id="ir-status">
+                    <option value="">-- Select Status --</option>
+                    <option value="CONTAINED">CONTAINED</option>
+                    <option value="OPEN">OPEN</option>
+                  </select>
+                </div>
+              </div>
+            </div>
+            <button class="btn-primary-soc" onclick="submitIncidentClassification()">SUBMIT CLASSIFICATION (+15 PTS)</button>
+            <span class="validation-msg" id="classification-feedback"></span>
+          </div>
+
+          <!-- FINAL CONCEPTUAL QUESTION -->
+          <div class="final-question-box">
+            <h4>🎓 Final Core Concept: "Who told the first system to trust the data?"</h4>
+            <p>Explain the complete attack chain in 2–3 sentences. How was statistical AI confidence mistakenly converted into financial authorization, and why did each component behave as designed while still resulting in a breach?</p>
+            <textarea id="final-explanation-text" placeholder="Explain the trust boundary breach: False data -> Unverified API Gateway -> AI Context -> 99.2% Confidence -> Policy Trigger -> Automated Signing..."></textarea>
+            <div class="btn-row-submit">
+              <button class="btn-primary-soc" onclick="submitFinalExplanation()">SUBMIT FINAL INVESTIGATION (+15 PTS)</button>
+              <span class="validation-msg" id="final-feedback"></span>
+            </div>
+          </div>
+
+          <!-- LAB COMPLETE & CONTAINMENT BANNER -->
+          <div class="lab-complete-card" id="lab-complete-card" style="display:none;">
+            <div class="complete-header">
+              <div class="success-glyph">✓</div>
+              <div>
+                <h2>LAB 01 COMPLETE &bull; CASE NEX-042 CONTAINED</h2>
+                <span class="complete-sub">Automation Profile Disabled &bull; Intelligence Source Quarantined &bull; Final Score: <strong id="final-score-display">180 PTS</strong></span>
+              </div>
+            </div>
+
+            <div class="remediation-summary">
+              <h3>🛡️ Professional Remediation & Lessons Learned:</h3>
+              <div class="remed-grid">
+                <div class="remed-col">
+                  <strong>🧠 AI Governance:</strong>
+                  <ul>
+                    <li>Mandate cryptographic data provenance on all external intelligence feeds.</li>
+                    <li>Statistical AI confidence must never serve as sole authorization for financial settlement.</li>
+                  </ul>
+                </div>
+                <div class="remed-col">
+                  <strong>⛓️ Web3 Security:</strong>
+                  <ul>
+                    <li>Enforce multi-signature human approval on treasury contracts exceeding threshold limits.</li>
+                    <li>Continuous bridge monitoring for newly generated destination wallets.</li>
+                  </ul>
+                </div>
+                <div class="remed-col">
+                  <strong>📡 API Security:</strong>
+                  <ul>
+                    <li>Strict Least Privilege: Ingestion services must not hold reputation modification scopes.</li>
+                    <li>Zero-Trust validation between internal ingestion APIs and AI context builders.</li>
+                  </ul>
+                </div>
+              </div>
+            </div>
+
+            <div class="epilogue-box">
+              <p><em>"We stopped the transaction. But we didn't stop whoever created it."</em></p>
+              <h4>THE GHOST IS STILL IN THE LEDGER</h4>
+              <p>Campaign <strong>ORION-NEXUS</strong> remains ACTIVE across 14 wallets and 4 networks.</p>
+              <span class="locked-next">NEXT INVESTIGATION &bull; CASE NEX-043: THE ORION SYNDICATE [LOCKED]</span>
+            </div>
+          </div>
+
+        </div>
+      </div>
+
+    </section>
+
+    <!-- ============================================================
+         RIGHT PANE: PERSONAL VIRTUAL SOC WORKSTATION (ATTACKBOX DESKTOP)
+    ============================================================ -->
+    <aside class="workstation-pane">
+
+      <!-- WORKSTATION KALI/NEXORA TOP BAR -->
+      <div class="vdesk-topbar">
+        <div class="vdesk-topbar-left">
+          <div class="vdesk-menu-btn" onclick="toggleDeskMenu(event)">
+            <span>💠 Applications</span>
+            <div class="vdesk-dropdown" id="vdesk-app-dropdown">
+              <div class="vdesk-dropdown-item" onclick="openAppWindow('browser')">🌐 Firefox Browser</div>
+              <div class="vdesk-dropdown-item" onclick="openAppWindow('terminal')">&gt;_ Analyst Terminal</div>
+              <div class="vdesk-dropdown-item" onclick="openAppWindow('blockchain')">⛓️ Blockchain Explorer</div>
+              <div class="vdesk-dropdown-item" onclick="openAppWindow('ai')">🧠 Orion AI Studio</div>
+              <div class="vdesk-dropdown-item" onclick="openAppWindow('api')">📡 Threat Intel Gateway</div>
+              <div class="vdesk-dropdown-item" onclick="openAppWindow('policy')">⚖️ Policy Engine Studio</div>
+              <div class="vdesk-dropdown-item" onclick="openAppWindow('evidence')">🗄️ Evidence Locker</div>
+              <div class="vdesk-dropdown-item" onclick="openAppWindow('files')">📁 File Manager (/home/analyst)</div>
+              <div class="vdesk-dropdown-item" onclick="openAppWindow('notes')">📝 Incident Notes</div>
+            </div>
+          </div>
+          <div class="vdesk-menu-item" onclick="notify('Workstation storage: /home/analyst (Local Isolated Scope)')">Places</div>
+          <div class="vdesk-menu-item" onclick="notify('System: Nexora SOC OS v4.2 &bull; 8 vCPUs &bull; 32GB RAM')">System</div>
+        </div>
+
+        <div class="vdesk-topbar-center">
+          <span class="vdesk-quick-icon" onclick="openAppWindow('terminal')" title="Terminal CLI">&gt;_</span>
+          <span class="vdesk-clock" id="vdesk-clock">01:47:13 UTC</span>
+          <span class="vdesk-quick-icon" onclick="openAppWindow('browser')" title="Browser">🦊</span>
+          <span class="vdesk-quick-icon" onclick="openAppWindow('notes')" title="Notes">📝</span>
+        </div>
+
+        <div class="vdesk-topbar-right">
+          <span class="vdesk-ip">SOC IP: 10.10.42.15</span>
+          <span class="vdesk-user">alex@nexora-soc</span>
+          <span class="vdesk-online-dot"></span>
+        </div>
+      </div>
+
+      <!-- WORKSTATION DESKTOP SURFACE WITH ICONS & WINDOWS -->
+      <div class="vdesk-surface" id="vdesk-surface">
+
+        <!-- DESKTOP ICONS GRID -->
+        <div class="vdesk-icons-grid">
+          <div class="vdesk-icon" tabindex="0" onclick="openAppWindow('browser')" ondblclick="openAppWindow('browser')">
+            <div class="vicon-glyph">🦊</div>
+            <div class="vicon-label">Firefox</div>
+          </div>
+          <div class="vdesk-icon" tabindex="0" onclick="openAppWindow('terminal')" ondblclick="openAppWindow('terminal')">
+            <div class="vicon-glyph">&gt;_</div>
+            <div class="vicon-label">Terminal</div>
+          </div>
+          <div class="vdesk-icon" tabindex="0" onclick="openAppWindow('blockchain')" ondblclick="openAppWindow('blockchain')">
+            <div class="vicon-glyph">⛓️</div>
+            <div class="vicon-label">Ledger Explorer</div>
+          </div>
+          <div class="vdesk-icon" tabindex="0" onclick="openAppWindow('ai')" ondblclick="openAppWindow('ai')">
+            <div class="vicon-glyph">🧠</div>
+            <div class="vicon-label">Orion Studio</div>
+          </div>
+          <div class="vdesk-icon" tabindex="0" onclick="openAppWindow('api')" ondblclick="openAppWindow('api')">
+            <div class="vicon-glyph">📡</div>
+            <div class="vicon-label">Threat Gateway</div>
+          </div>
+          <div class="vdesk-icon" tabindex="0" onclick="openAppWindow('policy')" ondblclick="openAppWindow('policy')">
+            <div class="vicon-glyph">⚖️</div>
+            <div class="vicon-label">Policy Engine</div>
+          </div>
+          <div class="vdesk-icon" tabindex="0" onclick="openAppWindow('evidence')" ondblclick="openAppWindow('evidence')">
+            <div class="vicon-glyph">🗄️</div>
+            <div class="vicon-label">Evidence Locker</div>
+          </div>
+          <div class="vdesk-icon" tabindex="0" onclick="openAppWindow('files')" ondblclick="openAppWindow('files')">
+            <div class="vicon-glyph">📁</div>
+            <div class="vicon-label">File Manager</div>
+          </div>
+          <div class="vdesk-icon" tabindex="0" onclick="openAppWindow('notes')" ondblclick="openAppWindow('notes')">
+            <div class="vicon-glyph">📝</div>
+            <div class="vicon-label">Incident Notes</div>
+          </div>
+        </div>
+
+        <!-- SIDE DOCK -->
+        <div class="vdesk-side-dock">
+          <div class="dock-item" title="Terminal CLI" onclick="openAppWindow('terminal')">&gt;_</div>
+          <div class="dock-item" title="Firefox Browser" onclick="openAppWindow('browser')">🦊</div>
+          <div class="dock-item" title="Blockchain Explorer" onclick="openAppWindow('blockchain')">⛓️</div>
+          <div class="dock-item" title="Orion AI Studio" onclick="openAppWindow('ai')">🧠</div>
+          <div class="dock-item" title="Threat Gateway" onclick="openAppWindow('api')">📡</div>
+          <div class="dock-item" title="Policy Studio" onclick="openAppWindow('policy')">⚖️</div>
+          <div class="dock-item" title="Incident Notes" onclick="openAppWindow('notes')">📝</div>
+          <div class="dock-item" title="Evidence Locker" onclick="openAppWindow('evidence')">🗄️</div>
+        </div>
+
+        <!-- ============================================================
+             FLOATING INTERACTIVE WORKSTATION WINDOWS
+        ============================================================ -->
+
+        <!-- 1. BROWSER WINDOW -->
+        <div class="vdesk-window" id="win-browser">
+          <div class="win-titlebar" onmousedown="bringWinToFront('win-browser')">
+            <div class="win-traffic-lights">
+              <span class="tl-btn close" onclick="closeAppWindow('browser')"></span>
+              <span class="tl-btn min" onclick="minimizeAppWindow('browser')"></span>
+              <span class="tl-btn max"></span>
+            </div>
+            <div class="win-title-text">Mozilla Firefox — Nexora Systems Internal Portal</div>
+          </div>
+          <div class="win-toolbar">
+            <button onclick="browserNavBack()">&larr;</button>
+            <button onclick="browserNavForward()">&rarr;</button>
+            <button onclick="browserNavReload()">&#x21bb;</button>
+            <div class="win-url-bar" id="browser-url-display">http://nexora.internal/portal/soc</div>
+          </div>
+          <div class="win-bookmarks">
+            <button onclick="navigateBrowser('/portal/soc')">📊 SOC Dashboard</button>
+            <button onclick="navigateBrowser('/portal/treasury')">💰 Treasury Portal</button>
+            <button onclick="navigateBrowser('/portal/blockchain')">⛓️ Ledger Admin</button>
+            <button onclick="navigateBrowser('/dashboard')">👤 Analyst Profile</button>
+          </div>
+          <div class="win-body no-pad">
+            <iframe id="browser-iframe" src="/portal/soc"></iframe>
+          </div>
+        </div>
+
+        <!-- 2. TERMINAL CLI WINDOW -->
+        <div class="vdesk-window active-win" id="win-terminal">
+          <div class="win-titlebar" onmousedown="bringWinToFront('win-terminal')">
+            <div class="win-traffic-lights">
+              <span class="tl-btn close" onclick="closeAppWindow('terminal')"></span>
+              <span class="tl-btn min" onclick="minimizeAppWindow('terminal')"></span>
+              <span class="tl-btn max"></span>
+            </div>
+            <div class="win-title-text">Terminal — alex@nexora-soc: /home/analyst</div>
+          </div>
+          <div class="win-body terminal-body-desk" onclick="document.getElementById('desk-term-input')?.focus()">
+            <div class="term-banner">Nexora SOC Safe Terminal v4.2 &bull; Clearance L2 &bull; Type <b>help</b> for commands.</div>
+            <div class="term-history" id="desk-term-history"></div>
+            <div class="term-input-row">
+              <span class="term-prompt" id="desk-term-prompt">alex@nexora-soc:~$</span>
+              <input type="text" id="desk-term-input" autocomplete="off" spellcheck="false" onkeydown="handleDeskTerminalKey(event)">
+            </div>
+          </div>
+        </div>
+
+        <!-- 3. BLOCKCHAIN EXPLORER WINDOW -->
+        <div class="vdesk-window" id="win-blockchain">
+          <div class="win-titlebar" onmousedown="bringWinToFront('win-blockchain')">
+            <div class="win-traffic-lights">
+              <span class="tl-btn close" onclick="closeAppWindow('blockchain')"></span>
+              <span class="tl-btn min" onclick="minimizeAppWindow('blockchain')"></span>
+              <span class="tl-btn max"></span>
+            </div>
+            <div class="win-title-text">Ledger Explorer — TX-NEX-7741 Forensics</div>
+          </div>
+          <div class="win-body">
+            <div class="bc-tx-summary">
+              <div class="bc-chip"><strong>TX:</strong> TX-NEX-7741</div>
+              <div class="bc-chip"><strong>Block:</strong> #489204</div>
+              <div class="bc-chip"><strong>Value:</strong> 82,400.00 NXR</div>
+              <div class="bc-chip status"><strong>Status:</strong> CONFIRMED IMMUTABLE</div>
+            </div>
+            <div class="bc-grid">
+              <div class="bc-card">
+                <h4>Transaction Call Graph</h4>
+                <div class="flow-step">
+                  <span class="step-lbl">From:</span>
+                  <code>0xNXR_TREASURY_01 (Nexora Treasury)</code>
+                </div>
+                <div class="flow-arrow">&darr; 82,400 NXR Outflow</div>
+                <div class="flow-step">
+                  <span class="step-lbl">Signer:</span>
+                  <code>0xAUTOSIGN_EXEC_V2 (Auto-Signer Contract)</code>
+                </div>
+                <div class="flow-arrow">&darr; Settled to Destination</div>
+                <div class="flow-step warning">
+                  <span class="step-lbl">Destination Wallet:</span>
+                  <code>0x7C41A8F231D5608E9B2D</code>
+                </div>
+                <div class="flow-arrow">&darr; Relayed Outflow</div>
+                <div class="flow-step">
+                  <span class="step-lbl">Bridge Adapter:</span>
+                  <code>0xBridge_Adapter_CrossNet &rarr; [Wallet-A, Wallet-B]</code>
+                </div>
+              </div>
+              <div class="bc-card">
+                <h4>Forensic Anomaly Breakdown</h4>
+                <table class="data-table">
+                  <tr><th>Attribute</th><th>Observed Ledger Value</th></tr>
+                  <tr><td>Account Age</td><td>3 Hours 12 Minutes (Fresh)</td></tr>
+                  <tr><td>Nexora KYC Label</td><td>NONE / UNKNOWN</td></tr>
+                  <tr><td>Bridge Interaction</td><td><span class="text-red">DETECTED (Immediate Egress)</span></td></tr>
+                  <tr><td>Blockchain Reality</td><td><span class="text-red">UNKNOWN / HIGH RISK</span></td></tr>
+                  <tr><td>Orion AI Pre-Score</td><td><span class="text-green">LOW RISK / TRUSTED</span></td></tr>
+                </table>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- 4. ORION AI STUDIO WINDOW -->
+        <div class="vdesk-window" id="win-ai">
+          <div class="win-titlebar" onmousedown="bringWinToFront('win-ai')">
+            <div class="win-traffic-lights">
+              <span class="tl-btn close" onclick="closeAppWindow('ai')"></span>
+              <span class="tl-btn min" onclick="minimizeAppWindow('ai')"></span>
+              <span class="tl-btn max"></span>
+            </div>
+            <div class="win-title-text">Orion AI Studio — Neural Risk Inference Pipeline (ORION-DEC-7741)</div>
+          </div>
+          <div class="win-body">
+            <div class="ai-overview-row">
+              <div class="ai-metric"><span class="lbl">Decision ID</span><span class="val mono">ORION-DEC-7741</span></div>
+              <div class="ai-metric"><span class="lbl">Outcome</span><span class="val green">APPROVED</span></div>
+              <div class="ai-metric"><span class="lbl">Confidence</span><span class="val cyan">99.2%</span></div>
+              <div class="ai-metric"><span class="lbl">Provenance</span><span class="val red">UNVERIFIED</span></div>
+            </div>
+            <div class="pipeline-visualizer">
+              <h4>Inference & Context Pipeline:</h4>
+              <div class="p-steps">
+                <div class="p-step"><span class="p-num">1</span><div class="p-name">Wallet Ingestion</div><div class="p-desc">0x7C41...9B2D</div></div>
+                <div class="p-step"><span class="p-num">2</span><div class="p-name">Feed Lookup</div><div class="p-desc">NOVA-INTEL-FEED (NIF-2038)</div></div>
+                <div class="p-step alert"><span class="p-num">3</span><div class="p-name">Context Builder</div><div class="p-desc">Reputation=1.0 (Unchecked)</div></div>
+                <div class="p-step"><span class="p-num">4</span><div class="p-name">Neural Model</div><div class="p-desc">99.2% Confidence</div></div>
+                <div class="p-step alert"><span class="p-num">5</span><div class="p-name">Action Broker</div><div class="p-desc">Auto-Signed via Policy</div></div>
+              </div>
+            </div>
+            <div class="principle-banner">⚠️ KEY TAKEAWAY: <strong>AI CONFIDENCE &ne; AUTHORIZATION</strong></div>
+          </div>
+        </div>
+
+        <!-- 5. THREAT INTEL & GATEWAY WINDOW -->
+        <div class="vdesk-window" id="win-api">
+          <div class="win-titlebar" onmousedown="bringWinToFront('win-api')">
+            <div class="win-traffic-lights">
+              <span class="tl-btn close" onclick="closeAppWindow('api')"></span>
+              <span class="tl-btn min" onclick="minimizeAppWindow('api')"></span>
+              <span class="tl-btn max"></span>
+            </div>
+            <div class="win-title-text">Threat Intel & API Gateway (INTEL-GW-04)</div>
+          </div>
+          <div class="win-body">
+            <div class="api-split">
+              <div class="api-col">
+                <h4>Vendor Feed Registry (auth-feeds.yaml)</h4>
+                <div class="feed-list">
+                  <div class="feed-item approved">✓ CROWDSTRIKE-FEED-01 (Approved Vendor)</div>
+                  <div class="feed-item approved">✓ MANDIANT-INTEL-PRO (Approved Vendor)</div>
+                  <div class="feed-item approved">✓ NEXORA-INTERNAL-SOC (Internal)</div>
+                  <div class="feed-item rogue">❌ NOVA-INTEL-FEED (UNREGISTERED VENDOR)</div>
+                </div>
+              </div>
+              <div class="api-col">
+                <h4>Gateway Audit Log (INTEL-GW-04)</h4>
+                <div class="gw-log-entry">
+                  <div class="log-time">2026-10-04 01:44:22 UTC</div>
+                  <div class="log-service">Caller: <code>INTEL-INGESTOR-02</code> &bull; POST <code>/api/v1/intel/inject</code></div>
+                  <div class="perm-diff">
+                    <div><strong>Expected Scope:</strong> Create Intelligence Records</div>
+                    <div><strong>Configured Scope:</strong> Create Records + <span class="text-red">modify_wallet_reputation</span></div>
+                  </div>
+                  <div class="least-priv-alert">🚨 <strong>LEAST PRIVILEGE VIOLATION DETECTED</strong></div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- 6. POLICY ENGINE WINDOW -->
+        <div class="vdesk-window" id="win-policy">
+          <div class="win-titlebar" onmousedown="bringWinToFront('win-policy')">
+            <div class="win-traffic-lights">
+              <span class="tl-btn close" onclick="closeAppWindow('policy')"></span>
+              <span class="tl-btn min" onclick="minimizeAppWindow('policy')"></span>
+              <span class="tl-btn max"></span>
+            </div>
+            <div class="win-title-text">Policy Engine Studio — ORION-SETTLEMENT-V2</div>
+          </div>
+          <div class="win-body">
+            <div class="code-block mono">
+POLICY_PROFILE: ORION-SETTLEMENT-V2
+RULE: IF AI_CONFIDENCE &gt;= 95.0%:
+    HUMAN_APPROVAL_BYPASS = TRUE
+    INVOKE_SIGNER(contract="0xAUTOSIGN_EXEC_V2", amount=82400, dest="0x7C41...9B2D")
+            </div>
+            <div class="campaign-search-box">
+              <h4>Cross-Nexora Campaign Intelligence Sweep</h4>
+              <div class="search-input-row">
+                <input type="text" id="desk-campaign-query" value="NIF-2038" placeholder="Indicator...">
+                <button class="btn-primary-soc" onclick="searchDeskCampaign()">Execute Sweep</button>
+              </div>
+              <div class="campaign-results" id="desk-campaign-results" style="display:none;"></div>
+            </div>
+          </div>
+        </div>
+
+        <!-- 7. EVIDENCE LOCKER WINDOW -->
+        <div class="vdesk-window" id="win-evidence">
+          <div class="win-titlebar" onmousedown="bringWinToFront('win-evidence')">
+            <div class="win-traffic-lights">
+              <span class="tl-btn close" onclick="closeAppWindow('evidence')"></span>
+              <span class="tl-btn min" onclick="minimizeAppWindow('evidence')"></span>
+              <span class="tl-btn max"></span>
+            </div>
+            <div class="win-title-text">Evidence Locker — Case NEX-042</div>
+          </div>
+          <div class="win-body">
+            <div class="evidence-grid" id="desk-evidence-grid"></div>
+          </div>
+        </div>
+
+        <!-- 8. FILE MANAGER WINDOW -->
+        <div class="vdesk-window" id="win-files">
+          <div class="win-titlebar" onmousedown="bringWinToFront('win-files')">
+            <div class="win-traffic-lights">
+              <span class="tl-btn close" onclick="closeAppWindow('files')"></span>
+              <span class="tl-btn min" onclick="minimizeAppWindow('files')"></span>
+              <span class="tl-btn max"></span>
+            </div>
+            <div class="win-title-text">File Manager — /home/analyst</div>
+          </div>
+          <div class="win-body files-split">
+            <div class="file-list-col">
+              <div class="file-row" onclick="viewFileContent('incident.log')">📄 incident.log</div>
+              <div class="file-row" onclick="viewFileContent('notes.txt')">📄 notes.txt</div>
+              <div class="file-row" onclick="viewFileContent('auth-feeds.yaml')">📄 auth-feeds.yaml</div>
+              <div class="file-row" onclick="viewFileContent('wallet.log')">📁 evidence/wallet.log</div>
+              <div class="file-row" onclick="viewFileContent('orion_inference_trace.json')">📁 evidence/orion_trace.json</div>
+              <div class="file-row" onclick="viewFileContent('gateway_audit.log')">📁 evidence/gateway_audit.log</div>
+            </div>
+            <div class="file-preview-col" id="desk-file-preview">
+              Select a file to inspect its raw telemetry contents.
+            </div>
+          </div>
+        </div>
+
+        <!-- 9. INCIDENT NOTES WINDOW -->
+        <div class="vdesk-window" id="win-notes">
+          <div class="win-titlebar" onmousedown="bringWinToFront('win-notes')">
+            <div class="win-traffic-lights">
+              <span class="tl-btn close" onclick="closeAppWindow('notes')"></span>
+              <span class="tl-btn min" onclick="minimizeAppWindow('notes')"></span>
+              <span class="tl-btn max"></span>
+            </div>
+            <div class="win-title-text">Incident Notes — investigation.txt</div>
+          </div>
+          <div class="win-body notes-wrap">
+            <textarea id="desk-notes-editor" placeholder="Record evidence hashes, parameters, and campaign notes here..."></textarea>
+            <div class="notes-footer">
+              <button class="btn-primary-soc" onclick="saveDeskNotes()">Save Notes</button>
+              <span id="desk-notes-status"></span>
+            </div>
+          </div>
+        </div>
+
+      </div><!-- /.vdesk-surface -->
+
+      <!-- WORKSTATION TASKBAR -->
+      <div class="vdesk-taskbar">
+        <div class="vdesk-start-orb" onclick="toggleDeskMenu(event)">💠 Start</div>
+        <div class="vdesk-running-apps" id="vdesk-running-apps">
+          <div class="vdesk-tab active" id="tab-terminal" onclick="toggleAppWindow('terminal')">&gt;_ Terminal</div>
+          <div class="vdesk-tab" id="tab-blockchain" onclick="toggleAppWindow('blockchain')">⛓️ Ledger</div>
+          <div class="vdesk-tab" id="tab-ai" onclick="toggleAppWindow('ai')">🧠 Orion AI</div>
+          <div class="vdesk-tab" id="tab-api" onclick="toggleAppWindow('api')">📡 Gateway</div>
+          <div class="vdesk-tab" id="tab-browser" onclick="toggleAppWindow('browser')">🌐 Firefox</div>
+        </div>
+      </div>
+
+    </aside>
+
+  </div>
+</div>
+
+<!-- TOAST NOTIFICATION CONTAINER -->
+<div class="soc-toast" id="soc-toast"></div>
+
+<script src="{{ url_for('static', filename='lab.js') }}"></script>
+</body>
+</html>

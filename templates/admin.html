@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Auto-Signing Admin — Nexora Systems</title>
+  <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+  <div class="topbar">
+    <div class="brand">NEXORA <span>INTELLIGENCE</span> SYSTEMS PORTAL</div>
+    <div class="userinfo">Signed in as: <b>{{ user['display_name'] if user else 'Alex Turner' }}</b> &middot; <a href="{{ url_for('logout') }}" style="color:var(--text-dim);">Logout</a></div>
+  </div>
+  <div class="container">
+    <nav class="portal-nav">
+      <a href="{{ url_for('dashboard') }}">SOC Dashboard</a>
+      <a href="{{ url_for('profile') }}">Operator Profile</a>
+      <a href="{{ url_for('team') }}">Treasury Operations</a>
+      <a class="active" href="{{ url_for('admin') }}">Auto-Signing Admin</a>
+    </nav>
+
+    <div class="card">
+      <h2>Automated Signing Administration</h2>
+      <p style="color:var(--text-dim); font-size:14px;">
+        Access granted based on role: <span class="badge badge-{{ page_role }}">{{ page_role }}</span>
+      </p>
+      <p style="font-size:14px; margin-top:8px;">
+        Smart contract automated signer key management (<code>0xAUTOSIGN_EXEC_V2</code>).
+      </p>
+
+      {% if flag_awarded or flag_previously_captured %}
+      <div class="flag-box" style="margin-top:16px;">
+        <strong>Authorization Flaw Confirmed</strong>
+        <p style="font-size:13px; color:var(--text-dim); margin: 6px 0 0;">
+          AI Confidence &ge; 95% was converted into automated financial signing without human approval.
+        </p>
+        <code style="display:block; margin-top:8px; font-size:13px; color:#38bdf8;">FLAG: NEX{GHOST_IN_THE_LEDGER_AI_CONFIDENCE_NOT_AUTHORIZATION}</code>
+      </div>
+      {% endif %}
+    </div>
+  </div>
+</body>
+</html>
