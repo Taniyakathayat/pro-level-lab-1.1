@@ -1173,3 +1173,185 @@ body.soc-dark {
   pointer-events: none;
 }
 .soc-toast.show { opacity: 1; transform: translateY(0); }
+
+/* ============================================================
+   MOBILE & TABLET RESPONSIVE SYSTEM (DESKTOP + MOBILE READY)
+   ============================================================ */
+@media (max-width: 1024px) {
+  .cyber-range-body {
+    grid-template-columns: 1fr;
+    height: auto;
+    min-height: calc(100vh - 70px);
+    overflow-y: auto;
+    padding: 10px;
+  }
+  .investigation-pane {
+    height: auto;
+    max-height: none;
+    overflow-y: visible;
+  }
+  .workstation-pane {
+    height: 580px;
+    min-height: 500px;
+  }
+  .cyber-range-body.view-story .workstation-pane {
+    display: none !important;
+  }
+  .cyber-range-body.view-workstation .investigation-pane {
+    display: none !important;
+  }
+  .cyber-range-body.view-workstation .workstation-pane {
+    height: calc(100vh - 75px);
+  }
+}
+
+@media (max-width: 768px) {
+  .soc-header {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 8px;
+    padding: 8px 10px;
+  }
+  .header-left {
+    justify-content: space-between;
+    width: 100%;
+  }
+  .org-name {
+    font-size: 11px;
+  }
+  .case-tag {
+    font-size: 9px;
+  }
+  .header-center {
+    justify-content: space-between;
+    width: 100%;
+    overflow-x: auto;
+    padding-bottom: 4px;
+    gap: 6px;
+  }
+  .stat-pill {
+    padding: 3px 8px;
+  }
+  .pill-value {
+    font-size: 11px;
+  }
+  .header-right {
+    overflow-x: auto;
+    width: 100%;
+    padding-bottom: 2px;
+    justify-content: flex-start;
+    gap: 4px;
+  }
+  .soc-tool-btn {
+    padding: 5px 8px;
+    font-size: 9.5px;
+    white-space: nowrap;
+  }
+  .case-meta-row {
+    flex-direction: column;
+    gap: 4px;
+  }
+  .chain-nodes {
+    gap: 3px;
+  }
+  .c-node {
+    font-size: 8.5px;
+    padding: 2px 4px;
+  }
+  .forensic-form-grid input,
+  .forensic-form-grid select {
+    font-size: 14px;
+    padding: 10px;
+  }
+  .action-dock {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 8px;
+  }
+  .action-dock button {
+    width: 100%;
+    text-align: center;
+    justify-content: center;
+    padding: 10px;
+  }
+  .vdesk-topbar {
+    padding: 4px 8px;
+    font-size: 10px;
+  }
+  .vdesk-ip {
+    display: none;
+  }
+  .vdesk-user {
+    font-size: 9.5px;
+  }
+  .vdesk-icons-grid {
+    grid-template-columns: repeat(3, 1fr);
+    gap: 8px;
+    padding: 10px 40px 10px 10px;
+    width: 100%;
+  }
+  .vicon-glyph {
+    font-size: 22px;
+  }
+  .vicon-label {
+    font-size: 9px;
+  }
+  .vdesk-side-dock {
+    right: 4px;
+    padding: 4px 2px;
+    gap: 4px;
+  }
+  .dock-item {
+    width: 28px;
+    height: 28px;
+    font-size: 13px;
+  }
+  .vdesk-window {
+    top: 4px;
+    left: 4px;
+    right: 4px;
+    bottom: 4px;
+  }
+  .bc-grid,
+  .api-split,
+  .files-split,
+  .evidence-grid,
+  .remed-grid {
+    grid-template-columns: 1fr;
+  }
+  .p-steps {
+    grid-template-columns: 1fr;
+  }
+  .ai-overview-row {
+    grid-template-columns: repeat(2, 1fr);
+  }
+  .prologue-card {
+    padding: 16px;
+    max-width: 95%;
+  }
+  .prologue-brand h2 {
+    font-size: 16px;
+  }
+  .telemetry-grid {
+    grid-template-columns: 1fr;
+  }
+  .telemetry-val {
+    font-size: 18px;
+  }
+  .prologue-actions button {
+    width: 100%;
+    justify-content: center;
+  }
+  .recon-slot-row {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 2px;
+  }
+  .slot-target {
+    width: 100%;
+  }
+  .recon-token {
+    font-size: 10px;
+    padding: 6px 8px;
+  }
+}
