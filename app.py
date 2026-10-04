@@ -29,7 +29,14 @@ from flask import (
 from werkzeug.security import generate_password_hash, check_password_hash
 
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
-DB_PATH = os.path.join(BASE_DIR, "database", "techcorp.db")
+if os.environ.get("VERCEL") or os.environ.get("AWS_LAMBDA_FUNCTION_NAME"):
+    DB_DIR = "/tmp/database"
+    os.makedirs(DB_DIR, exist_ok=True)
+    DB_PATH = os.path.join(DB_DIR, "techcorp.db")
+else:
+    DB_DIR = os.path.join(BASE_DIR, "database")
+    os.makedirs(DB_DIR, exist_ok=True)
+    DB_PATH = os.path.join(DB_DIR, "techcorp.db")
 
 app = Flask(__name__)
 app.secret_key = os.environ.get("LAB_SECRET_KEY", "nexora-pro-cyber-range-secret-key-nex042")
@@ -55,6 +62,8 @@ def log_request():
 # Database helpers & Initial Setup
 # ----------------------------------------------------------------------
 def get_db():
+    if not os.path.exists(DB_PATH):
+        init_db()
     if "db" not in g:
         g.db = sqlite3.connect(DB_PATH)
         g.db.row_factory = sqlite3.Row
@@ -69,7 +78,7 @@ def close_db(exception=None):
 
 
 def init_db():
-    os.makedirs(os.path.join(BASE_DIR, "database"), exist_ok=True)
+    os.makedirs(os.path.dirname(DB_PATH), exist_ok=True)
     conn = sqlite3.connect(DB_PATH)
     cur = conn.cursor()
     cur.executescript(
